@@ -2,6 +2,7 @@ import net from "net";
 import configLoader from "./configLoader.js";
 import encoder from "./encoder.js";
 import decoder from "./decoder.js";
+import setActivity from "./setActivity.js";
 
 const config = configLoader();
 console.log("Loaded config");
@@ -25,6 +26,12 @@ client.on("data", (data) => {
   const res = decoder(data);
 
   console.log("Received data from discord client:", res);
+
+  if (res.evt == "READY") {
+    console.log("readyです");
+
+    setActivity(client);
+  }
 });
 
 client.on("error", (err) => {
