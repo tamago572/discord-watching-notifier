@@ -7,14 +7,24 @@
 
   },
   "background": {
-    "service_worker": "src/background/service-worker.ts"
+    "service_worker": "src/background/service-worker.ts",
+    "type": "module"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/watch?v=*"
+      ],
+      "js": ["src/content/content.ts"],
+      "run_at": "document_start"
+    }
+  ],
   "action": {
     "default_icon": {
 
     },
     "default_popup": "index.html"
   },
-  "permissions": ["scripting", "activeTab"]
+  "permissions": ["nativeMessaging", "scripting", "activeTab"]
 }
 
