@@ -4,7 +4,7 @@ import logger from "./logger.js";
 import path from "path";
 import { createInterface } from "readline";
 
-const configPath = path.join(import.meta.dirname, "config.json");
+const configPath = path.join(path.dirname(process.execPath), "config.json");
 
 const configInitializer = () => {
   return new Promise<void>((resolve) => {

@@ -5,11 +5,11 @@ class Logger {
   private logFile: string;
 
   constructor() {
-    if (!fs.existsSync(path.join(import.meta.dirname, "debug.log"))) {
-      fs.writeFileSync(path.join(import.meta.dirname, "debug.log"), "", "utf-8");
+    if (!fs.existsSync(path.join(path.dirname(process.execPath), "debug.log"))) {
+      fs.writeFileSync(path.join(path.dirname(process.execPath), "debug.log"), "", "utf-8");
     }
 
-    this.logFile = path.join(import.meta.dirname, "debug.log");
+    this.logFile = path.join(path.dirname(process.execPath), "debug.log");
   }
 
   log(message: string) {

@@ -4,6 +4,7 @@ import encoder from "./encoder.js";
 import decoder from "./decoder.js";
 import setActivity from "./setActivity.js";
 import logger from "./logger.js";
+import configureNativeMessaging from "./configureNativeMssaging.js";
 
 const configPromise = configLoader();
 logger.log("Config loaded successfully.");
@@ -11,8 +12,9 @@ logger.log("Config loaded successfully.");
 const activityName = process.argv[2] || "アクティビティ名を取得できませんでした";
 const activityState = process.argv[3] || "ステータスを取得できませんでした";
 
-
 logger.log(`Activity Name: ${activityName}`);
+
+configureNativeMessaging();
 
 // \\.\pipe\discord-ipc-0へ
 const client = net.createConnection("\\\\.\\pipe\\discord-ipc-0", async () => {
