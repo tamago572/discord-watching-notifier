@@ -1,6 +1,6 @@
 import type { PageMatchedMessage, NativeMessagingPayload } from "../types/NMProps"
 
-const NATIVE_HOST_NAME = "com.example.discord_watching_notifier"
+const NATIVE_HOST_NAME = "dev.bunbunapp.discord_watching_notifier"
 
 // ページ一致通知を受けたら、native host に URL と title を送る。
 chrome.runtime.onMessage.addListener((message: PageMatchedMessage, _sender, sendResponse) => {

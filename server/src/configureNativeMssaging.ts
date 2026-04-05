@@ -2,6 +2,9 @@ import { platform } from 'os';
 import { exec } from 'child_process';
 import logger from './logger.js';
 import path from 'path';
+import fs from 'fs';
+
+const manifestFilePath = path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json");
 
 const registerRegistry = () => {
   exec(`REG ADD "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\dev.bunbunapp.discord_watching_notifier" /ve /t REG_SZ /d "${path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json")}" /f`, (addError, addStdout, addStderr) => {
@@ -9,6 +12,28 @@ const registerRegistry = () => {
       logger.log(`Error adding registry key: ${addError.message}`);
     }
   });
+}
+
+interface Manifest {
+  name: string;
+  description: string;
+  path: string;
+  type: string;
+  allowed_origins: string[];
+}
+
+const manifest: Manifest = {
+  name: "dev.bunbunapp.discord_watching_notifier",
+  description: "Discord Watching Notifier",
+  path: manifestFilePath,
+  type: "stdio",
+  allowed_origins: ["chrome-extension://jphkgncpmapmfkicggnalhepifijagep/"] // TODO: 公開したらIDを書き換える
+}
+
+const writeManifestFile = () => {
+  const manifestPath = path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json");
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest), "utf-8");
+  logger.log(`Manifest file written to ${manifestPath}`);
 }
 
 const configureNativeMessaging = () => {
@@ -23,6 +48,7 @@ const configureNativeMessaging = () => {
         logger.log(`これを実行します REG ADD "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\dev.bunbunapp.discord_watching_notifier" /ve /t REG_SZ /d "${path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json")}" /f`);
         // レジストリキーを作成
         registerRegistry();
+        writeManifestFile();
         return;
       }
       logger.log(`Registry query result: ${stdout}`);
@@ -34,6 +60,7 @@ const configureNativeMessaging = () => {
         logger.log("Registry is not correctly set up. Updating registry.");
         // レジストリキーを更新
         registerRegistry();
+        writeManifestFile();
       }
     });
 
