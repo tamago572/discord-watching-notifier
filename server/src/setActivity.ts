@@ -4,6 +4,7 @@ import encoder from "./encoder.js";
 interface Activity {
   name: string;
   state: string;
+  url?: string;
 }
 
 const setActivity = (client: net.Socket, activityData: Activity) => {
@@ -14,11 +15,11 @@ const setActivity = (client: net.Socket, activityData: Activity) => {
       "activity": {
         "name": activityData.name,
         "type": 5,
-        "url": "https://blog.bunbunapp.dev",
+        "url": activityData.url,
         "state": activityData.state,
-        "state_url": "https://blog.bunbunapp.dev",
+        "state_url": activityData.url,
         "details": activityData.name,
-        "details_url": "https://blog.bunbunapp.dev/posts",
+        "details_url": activityData.url,
         "timestamps": {
           "start": Date.now(),
           // "end": Date.now() + (60 * 5 + 23) * 1000 // endにするとカウントダウンになる

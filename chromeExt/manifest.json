@@ -16,7 +16,7 @@
         "https://www.youtube.com/watch?v=*"
       ],
       "js": ["src/content/content.ts"],
-      "run_at": "document_start"
+      "run_at": "document_idle"
     }
   ],
   "action": {
