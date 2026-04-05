@@ -3,19 +3,21 @@ import configLoader from "./configLoader.js";
 import encoder from "./encoder.js";
 import decoder from "./decoder.js";
 import setActivity from "./setActivity.js";
+import logger from "./logger.js";
 
-const config = configLoader();
-console.log("Loaded config");
+const configPromise = configLoader();
+logger.log("Config loaded successfully.");
 
 const activityName = process.argv[2] || "アクティビティ名を取得できませんでした";
 const activityState = process.argv[3] || "ステータスを取得できませんでした";
 
 
-console.log(config);
+logger.log(`Activity Name: ${activityName}`);
 
 // \\.\pipe\discord-ipc-0へ
-const client = net.createConnection("\\\\.\\pipe\\discord-ipc-0", () => {
-  console.log("Connected to discord client.");
+const client = net.createConnection("\\\\.\\pipe\\discord-ipc-0", async () => {
+  logger.log("Connected to discord client.");
+  const config = await configPromise;
 
   const handshake = {
     v: 1,
@@ -28,10 +30,10 @@ client.on("data", (data) => {
   if (!Buffer.isBuffer(data)) return;
   const res = decoder(data);
 
-  console.log("Received data from discord client:", res);
+  logger.log(`Received data from discord client: ${JSON.stringify(res)}`);
 
   if (res.evt == "READY") {
-    console.log("readyです");
+    logger.log("readyです");
 
     setActivity(client, {
       name: activityName,
@@ -41,9 +43,9 @@ client.on("data", (data) => {
 });
 
 client.on("error", (err) => {
-  console.error("Error connecting to discord client:", err);
+  logger.log(`Error: ${err.message}`);
 })
 
 client.on("end", () => {
-  console.log("Disconnected from discord client.");
+  logger.log("Disconnected from discord client.");
 })
