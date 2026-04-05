@@ -1,18 +1,23 @@
 import net from "net";
 import encoder from "./encoder.js";
 
-const setActivity = (client: net.Socket) => {
+interface Activity {
+  name: string;
+  state: string;
+}
+
+const setActivity = (client: net.Socket, activityData: Activity) => {
   const activity = {
     "cmd": "SET_ACTIVITY",
     "args": {
       "pid": process.pid,
       "activity": {
-        "name": "アクティビティ名",
+        "name": activityData.name,
         "type": 5,
         "url": "https://blog.bunbunapp.dev",
-        "state": "これはステータス",
+        "state": activityData.state,
         "state_url": "https://blog.bunbunapp.dev",
-        "details": "これは詳細部分",
+        "details": activityData.name,
         "details_url": "https://blog.bunbunapp.dev/posts",
         "timestamps": {
           "start": Date.now(),
