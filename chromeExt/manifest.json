@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Discord Watching Notifier",
+  "description": "視聴中の動画・アニメのタイトルをDiscordのアクティビティステータスに表示する拡張機能です。",
+  "version": "1.0",
+  "icons": {
+
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.ts"
+  },
+  "action": {
+    "default_icon": {
+
+    },
+    "default_popup": "index.html"
+  },
+  "permissions": ["scripting", "activeTab"]
+}
+
