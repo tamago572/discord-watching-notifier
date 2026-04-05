@@ -7,8 +7,9 @@ const setActivity = (client: net.Socket) => {
     "args": {
       "pid": process.pid,
       "activity": {
-        "name": "RPC API開発のテスト",
+        "name": "アクティビティ名",
         "type": 5,
+        "url": "https://blog.bunbunapp.dev",
         "state": "これはステータス",
         "state_url": "https://blog.bunbunapp.dev",
         "details": "これは詳細部分",
