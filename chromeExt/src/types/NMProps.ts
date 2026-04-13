@@ -3,13 +3,15 @@ export type PageMatchedMessage = {
   type: "PAGE_MATCHED"
   url: string
   title: string
+  description: string
 }
 
 // Native messaging の送信ペイロード型
 export type NativeMessagingPayload = {
-  title: string
-  description: string
-  url: string
+  action?: "set" | "shutdown"
+  title?: string
+  description?: string
+  url?: string
 }
 
 // Native messaging のレスポンス型

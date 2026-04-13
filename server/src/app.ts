@@ -7,6 +7,7 @@ import logger from "./logger.js";
 import configureNativeMessaging from "./configureNativeMssaging.js";
 
 type NativeMessagePayload = {
+  action?: "set" | "shutdown";
   title?: string;
   description?: string;
   url?: string;
@@ -31,7 +32,18 @@ const sendNativeResponse = (json: object) => {
   process.stdout.write(Buffer.concat([header, body]));
 }
 
+const shutdownHost = (client: net.Socket) => {
+  logger.log("Shutting down native host.");
+  client.end();
+  process.exit(0);
+}
+
 const applyNativePayload = (payload: NativeMessagePayload, client: net.Socket) => {
+  if (payload.action === "shutdown") {
+    shutdownHost(client);
+    return false;
+  }
+
   if (payload.title) {
     activityName = payload.title;
   }
@@ -43,6 +55,7 @@ const applyNativePayload = (payload: NativeMessagePayload, client: net.Socket) =
   }
 
   logger.log(`Native message payload: ${JSON.stringify(payload)}`);
+  return true;
 }
 
 logger.log(`Activity Name: ${activityName}`);
@@ -75,8 +88,10 @@ process.stdin.on("data", (chunk: Buffer) => {
 
     try {
       const payload = JSON.parse(messageBytes.toString("utf-8")) as NativeMessagePayload;
-      applyNativePayload(payload, client);
-      sendNativeResponse({ ok: true });
+      const shouldRespond = applyNativePayload(payload, client);
+      if (shouldRespond) {
+        sendNativeResponse({ ok: true });
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logger.log(`Failed to parse native message: ${errorMessage}`);
@@ -87,6 +102,16 @@ process.stdin.on("data", (chunk: Buffer) => {
 
 process.stdin.on("error", (err) => {
   logger.log(`stdin error: ${err.message}`);
+});
+
+process.stdin.on("end", () => {
+  logger.log("stdin ended.");
+  shutdownHost(client);
+});
+
+process.stdin.on("close", () => {
+  logger.log("stdin closed.");
+  shutdownHost(client);
 });
 
 client.on("data", (data) => {

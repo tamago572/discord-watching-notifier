@@ -4,6 +4,8 @@ import logger from './logger.js';
 import path from 'path';
 import fs from 'fs';
 
+const extensionId = "jphkgncpmapmfkicggnalhepifijagep"; // TODO: 公開したらIDを書き換える
+
 const registerRegistry = () => {
   exec(`REG ADD "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\dev.bunbunapp.discord_watching_notifier" /ve /t REG_SZ /d "${path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json")}" /f`, (addError, addStdout, addStderr) => {
     if (addError) {
@@ -25,7 +27,7 @@ const manifest: Manifest = {
   description: "Discord Watching Notifier",
   path: process.execPath,
   type: "stdio",
-  allowed_origins: ["chrome-extension://jphkgncpmapmfkicggnalhepifijagep/"] // TODO: 公開したらIDを書き換える
+  allowed_origins: [`chrome-extension://${extensionId}/`]
 }
 
 const writeManifestFile = () => {

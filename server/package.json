@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "autobuild": "tsc --watch",
-    "dev": "nodemon dist/app.js"
+    "dev": "nodemon dist/app.js",
+    "release": "npm run build && nexe dist/app.js -o release/DiscordWatchingNotifier.exe -t windows-x64-14.15.3"
   },
   "repository": {
     "type": "git",
@@ -17,13 +18,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "bugs": {
     "url": "https://github.com/tamago572/discord-watching-notifier/issues"
   },
   "homepage": "https://github.com/tamago572/discord-watching-notifier#readme",
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "nexe": "^5.0.0-beta.4",
     "nodemon": "^3.1.14",
     "typescript": "^6.0.2"
   }
