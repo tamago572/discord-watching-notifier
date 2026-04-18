@@ -4,7 +4,7 @@ import logger from './logger.js';
 import path from 'path';
 import fs from 'fs';
 
-const extensionId = "jphkgncpmapmfkicggnalhepifijagep"; // TODO: 公開したらIDを書き換える
+const extensionId = "ipmllopioejmlgcmfgofncooelhfkkag";
 
 const registerRegistry = () => {
   exec(`REG ADD "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\dev.bunbunapp.discord_watching_notifier" /ve /t REG_SZ /d "${path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json")}" /f`, (addError, addStdout, addStderr) => {
