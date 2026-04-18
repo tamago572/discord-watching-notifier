@@ -11,7 +11,7 @@ const watchingSitesStatus: WatchingSiteStatus = {
 switch (url) {
 	case "https://animestore.docomo.ne.jp/animestore/sc_d_pc":
 		watchingSitesStatus.url = "https://animestore.docomo.ne.jp/";
-		watchingSitesStatus.title = document.querySelectorAll(".backInfoTxt1")[0].textContent || "";
+		watchingSitesStatus.title = document.querySelectorAll(".backInfoTxt1")[0].textContent || "アニメを視聴中";
 		watchingSitesStatus.description = `${document.querySelectorAll(".backInfoTxt2")[0].textContent || ""} ${document.querySelectorAll(".backInfoTxt3")[0].textContent || ""}`;
 		break;
 	// case "https://www.amazon.co.jp/gp/video/detail":
@@ -31,14 +31,11 @@ const message: PageMatchedMessage = {
 
 console.log("[Discord Watching Notifier] Page matched:", message.url, message.title);
 
-
 // content script からは native messaging を直接呼べないので、service worker に中継する。
-chrome.runtime.sendMessage(message, (response) => {
-	if (chrome.runtime.lastError) {
-		console.error("[Discord Watching Notifier] Failed to notify background:", chrome.runtime.lastError.message)
-		return
-	}
+// タブが閉じられることを監視したいため、Service WorkerとContent Scriptをつなぐポートを作る。
+// ポートはページ遷移やタブ閉じで切断されるため、それで検知する
+const backgroundPort = chrome.runtime.connect({ name: "watching-page" });
+backgroundPort.postMessage(message);
+console.log("[Discord Watching Notifier] Sent message to background:", message.url, message.title);
 
-	console.log("[Discord Watching Notifier] Background response:", response)
-})
 
