@@ -48,7 +48,6 @@ const configureNativeMessaging = () => {
         logger.log(`これを実行します REG ADD "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\dev.bunbunapp.discord_watching_notifier" /ve /t REG_SZ /d "${path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json")}" /f`);
         // レジストリキーを作成
         registerRegistry();
-        writeManifestFile();
         return;
       }
       logger.log(`Registry query result: ${stdout}`);
@@ -60,10 +59,10 @@ const configureNativeMessaging = () => {
         logger.log("Registry is not correctly set up. Updating registry.");
         // レジストリキーを更新
         registerRegistry();
-        writeManifestFile();
       }
     });
 
+    fs.existsSync(path.join(path.dirname(process.execPath), "discord-watching-notifier-manifest.json")) || writeManifestFile();
   } else {
     // Windows以外
     // ChromeのNative Messagingに登録されているレジストリを取得

@@ -1,0 +1,93 @@
+name: Build and Release Server EXE
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: chromeExt/package-lock.json
+
+      - name: Install chromeExt dependencies
+        working-directory: chromeExt
+        run: npm ci
+
+      - name: Lint chromeExt
+        working-directory: chromeExt
+        run: npm run lint
+
+  release:
+    needs: ci
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build release executable
+        run: npm run release
+
+      - name: Compute next release tag
+        id: next_tag
+        shell: pwsh
+        run: |
+          git fetch --tags --force
+
+          $tags = git tag -l "v1.*.0"
+          $maxMinor = -1
+
+          foreach ($tag in $tags) {
+            if ($tag -match '^v1\.(\d+)\.0$') {
+              $minor = [int]$matches[1]
+              if ($minor -gt $maxMinor) {
+                $maxMinor = $minor
+              }
+            }
+          }
+
+          $nextMinor = $maxMinor + 1
+          $nextTag = "v1.$nextMinor.0"
+
+          "tag=$nextTag" >> $env:GITHUB_OUTPUT
+          Write-Host "Next tag: $nextTag"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.next_tag.outputs.tag }}
+          name: ${{ steps.next_tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          files: |
+            server/release/DiscordWatchingNotifier.exe
