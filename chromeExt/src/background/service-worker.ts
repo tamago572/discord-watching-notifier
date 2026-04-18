@@ -80,28 +80,3 @@ chrome.runtime.onConnect.addListener((port) => {
     }
   })
 })
-
-// ページ一致通知を受けたら、native host に URL と title を送る。
-chrome.runtime.onMessage.addListener((message: PageMatchedMessage, _sender, sendResponse) => {
-  if (message.type !== "PAGE_MATCHED") {
-    return false
-  }
-
-  try {
-    // レジストリ登録後にこの host 名で外部アプリへ渡す。
-    const payload: NativeMessagingPayload = {
-      action: "set",
-      title: message.title,
-      description: message.description,
-      url: message.url,
-    }
-    postNativeMessage(payload)
-    sendResponse({ ok: true })
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error("[Discord Watching Notifier] Native messaging failed:", errorMessage)
-    sendResponse({ ok: false, error: errorMessage })
-  }
-
-  return false
-})
