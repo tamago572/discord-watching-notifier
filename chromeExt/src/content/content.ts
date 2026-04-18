@@ -14,11 +14,11 @@ switch (url) {
 		watchingSitesStatus.title = document.querySelectorAll(".backInfoTxt1")[0].textContent || "";
 		watchingSitesStatus.description = `${document.querySelectorAll(".backInfoTxt2")[0].textContent || ""} ${document.querySelectorAll(".backInfoTxt3")[0].textContent || ""}`;
 		break;
-	case "https://www.amazon.co.jp/gp/video/detail":
-		watchingSitesStatus.url = "https://www.amazon.co.jp/";
+	// case "https://www.amazon.co.jp/gp/video/detail":
+	// 	watchingSitesStatus.url = "https://www.amazon.co.jp/";
 		// TODO: Amazon Prime VideoのHTML構造から取得する処理を書く
 
-		break;
+		// break;
 	default:
 		break;
 }
